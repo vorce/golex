@@ -105,15 +105,15 @@ defmodule Golex do
     IO.write "."
   end
 
-  # Print, tick world loop
-  defp pt(world) do
+  # Print, tick, loop
+  defp ptl(world) do
     print_world(world)
     IO.gets("-----------")
-    world_tick(world) |> pt
+    world_tick(world) |> ptl
   end
 
   def start(_opts // []) do
     myworld = random_world(80, 20)
-    pt(myworld)
+    ptl(myworld)
   end
 end
