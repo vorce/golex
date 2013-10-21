@@ -2,6 +2,7 @@ defmodule GolexTest do
   use ExUnit.Case, async: true
 
   alias Golex.Cell, as: Cell
+  alias Golex.World, as: World
 
   @cell1 Cell[position: [1, 1], neighbors: -1, alive: true]
   @cell2 Cell[position: [0, 1], neighbors: 2, alive: true]
@@ -55,30 +56,35 @@ defmodule GolexTest do
   end
 
   test "World tick kills lonely cell" do
-    assert Golex.world_tick([@cell2]) ==
-      [Cell[position: @cell2.position,
+    assert Golex.world_tick(World[cells: [@cell2]]) ==
+      World[cells: [Cell[position: @cell2.position,
             neighbors: 0,
             alive: false]]
+          ]
   end
 
   test "World tick kills crowded cells" do
-    w = [@cell3, @cell5, @cell2, @cell1, @cell4]
+    w = World[cells: [@cell3, @cell5, @cell2, @cell1, @cell4]]
     assert Golex.world_tick(w) ==
-            [Golex.Cell[position: [0, 0], neighbors: 3, alive: true],
+            World[cells: [
+              Golex.Cell[position: [0, 0], neighbors: 3, alive: true],
               Golex.Cell[position: [1, 0], neighbors: 3, alive: true],
               Golex.Cell[position: [0, 1], neighbors: 4, alive: false],
               Golex.Cell[position: [1, 1], neighbors: 4, alive: false],
               Golex.Cell[position: [0, 2], neighbors: 2, alive: true]]
+            ]
   end
 
   test "Cells should die in world with few living neighbors" do
-    w = [@cell3.alive(false), @cell5.alive(false), @cell2, @cell1, @cell4.alive(false)]
+    w = World[cells: [@cell3.alive(false), @cell5.alive(false), @cell2, @cell1, @cell4.alive(false)]]
     assert Golex.world_tick(w) ==
-            [Golex.Cell[position: [0, 0], neighbors: 2, alive: false],
+            World[cells: [
+              Golex.Cell[position: [0, 0], neighbors: 2, alive: false],
               Golex.Cell[position: [1, 0], neighbors: 2, alive: false],
               Golex.Cell[position: [0, 1], neighbors: 1, alive: false],
               Golex.Cell[position: [1, 1], neighbors: 1, alive: false],
               Golex.Cell[position: [0, 2], neighbors: 2, alive: false]]
+            ]
   end
 
   test "Dead cells should not be counted as neighbors" do
@@ -88,7 +94,10 @@ defmodule GolexTest do
   end
 
   test "Should get random, non empty, world" do
-    assert length(Golex.random_world(80, 20)) == 1600 
+    w = Golex.random_world(80, 20)
+    assert length(w.cells) == 1600 
+    assert Enum.first(w.dimensions) == 80
+    assert Enum.at(w.dimensions, 1) == 20
   end
 
   test "Should get random cell within bounds" do
@@ -109,9 +118,9 @@ defmodule GolexTest do
     assert Enum.at(c.position, 1) == 42
   end
 
-  #test "Coordinates" do
-  #  expected = [{0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}, {3, 0}, {3, 1}, {3, 2}]
-  #  cs = Golex.coords(Enum.to_list(0..3), Enum.to_list(0..2))
-  #  assert cs == expected
-  #end
+  test "Should have new line after each row" do
+    width = 4
+    ws = Golex.world_string(Golex.random_world(width, 3), [])
+    assert String.ends_with?(Enum.at(ws, width - 1), "\n")
+  end
 end

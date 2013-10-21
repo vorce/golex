@@ -1,5 +1,6 @@
 defmodule Golex do
   defrecord Cell, position: [], neighbors: 0, alive: false
+  defrecord World, dimensions: [], cells: []
  
   @doc """
   Updates a given cell's alive status according to its number of living
@@ -41,13 +42,13 @@ defmodule Golex do
   @doc """
   Returns a new world (list of cells) from the specified one, evolved.
   """
-  def world_tick(world) do
-    do_world_tick(world)
+  def world_tick(World[dimensions: dim, cells: cells]) do
+    World[dimensions: dim, cells: do_world_tick(cells)]
   end
 
-  defp do_world_tick(world) do
-    Enum.map world, fn(cell) ->
-      neighbors(world, cell) |> cell.neighbors |> cell_tick
+  defp do_world_tick(cells) do
+    Enum.map cells, fn(cell) ->
+      neighbors(cells, cell) |> cell.neighbors |> cell_tick
     end
   end
 
@@ -58,11 +59,12 @@ defmodule Golex do
     xs = Enum.to_list(0..width - 1)
     ys = Enum.to_list(0..height - 1)
     cs = coords(xs, ys)
-    Enum.map(cs, fn({x, y}) -> new_cell(x, y) end)
+    World[dimensions: [width, height], cells: Enum.map(cs, fn({x, y}) -> new_cell(x, y) end)]
   end
 
   defp coords(xs, ys) do
-    lc x inlist xs, x, y inlist ys, do: {x, y}
+    #lc x inlist xs, x, y inlist ys, do: {x, y}
+    lc y inlist ys, y, x inlist xs, do: {x, y}
   end
 
   @doc """
@@ -93,27 +95,33 @@ defmodule Golex do
     :random.uniform(max + 1) - 1
   end
 
-  def print_world(world) do
-    Enum.each(world, fn(c) -> print_cell(c) end)
+  def world_string(World[cells: []], acc) do
+    acc
   end
 
-  defp print_cell(Cell[alive: true]) do
-    IO.write "#"
+  def world_string(World[dimensions: [w, he], cells: [h | t]], acc) do
+    world_string(World[dimensions: [w, he], cells: t],
+                  acc ++ [cell_string(w, h)])
   end
 
-  defp print_cell(Cell[alive: false]) do
-    IO.write "."
+  defp cell_string(width, Cell[position: [x, _], alive: living]) do
+    cond do
+      x + 1 == width && living -> "#\n"
+      x + 1 == width && !living -> ".\n"
+      living -> "#"
+      true -> "."
+    end
   end
 
   # Print, tick, loop
   defp ptl(world) do
-    print_world(world)
+    IO.puts world_string(world, [])
     IO.gets("-----------")
     world_tick(world) |> ptl
   end
 
   def start(_opts // []) do
-    myworld = random_world(80, 20)
+    myworld = random_world(79, 20) # 80, 20)
     ptl(myworld)
   end
 end
