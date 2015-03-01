@@ -7,3 +7,7 @@ Conway's Game Of Life in Elixir.
     iex -S mix
     iex(1)> Golex.start()
 
+or
+
+    mix run -e Golex.start
+

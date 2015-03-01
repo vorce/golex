@@ -4,7 +4,6 @@ defmodule Golex.Mixfile do
   def project do
     [ app: :golex,
       version: "0.0.1",
-      elixir: "~> 0.10.0", #"~> 0.10.1",
       deps: deps ]
   end
 
