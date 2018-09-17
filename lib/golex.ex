@@ -1,5 +1,4 @@
 defmodule Golex do
- 
   @doc """
   Updates a given cell's alive status according to its number of living
   neghbors.
@@ -18,22 +17,32 @@ defmodule Golex do
   end
 
   def neighbors(cells, %Cell{position: pos}) do
-    length neighbor_cells(cells, pos)
+    length(neighbor_cells(cells, pos))
   end
 
   def neighbor_cells(cells, pos) do
-    Enum.filter cells, fn(cell) -> 
-      neighbor? cell, pos
-    end
+    Enum.filter(cells, fn cell ->
+      neighbor?(cell, pos)
+    end)
   end
 
   defp neighbor?(%Cell{position: [cx, cy], alive: living}, [x, y]) do
     cond do
-      !living -> false # Dead cells aren't counted as neighbors
-      abs(cx - x) == 1 && abs(cy - y) == 1 -> true
-      abs(cx - x) == 1 && cy == y -> true
-      abs(cy - y) == 1 && cx == x -> true
-      true -> false
+      # Dead cells aren't counted as neighbors
+      !living ->
+        false
+
+      abs(cx - x) == 1 && abs(cy - y) == 1 ->
+        true
+
+      abs(cx - x) == 1 && cy == y ->
+        true
+
+      abs(cy - y) == 1 && cx == x ->
+        true
+
+      true ->
+        false
     end
   end
 
@@ -45,23 +54,23 @@ defmodule Golex do
   end
 
   defp do_world_tick(cells) do
-    Enum.map cells, fn(cell) ->
+    Enum.map(cells, fn cell ->
       %Cell{cell | neighbors: neighbors(cells, cell)} |> cell_tick
-    end
+    end)
   end
 
   @doc """
   Returns a new, random world of specified dimensions
   """
   def random_world(width, height) do
-    xs = Enum.to_list(0..width - 1)
-    ys = Enum.to_list(0..height - 1)
+    xs = Enum.to_list(0..(width - 1))
+    ys = Enum.to_list(0..(height - 1))
     cs = coords(xs, ys)
-    %World{dimensions: [width, height], cells: Enum.map(cs, fn({x, y}) -> new_cell(x, y) end)}
+    %World{dimensions: [width, height], cells: Enum.map(cs, fn {x, y} -> new_cell(x, y) end)}
   end
 
   defp coords(xs, ys) do
-    #lc y inlist ys, y, x inlist xs, do: {x, y}
+    # lc y inlist ys, y, x inlist xs, do: {x, y}
     for y <- ys, x <- xs, do: {x, y}
   end
 
@@ -72,9 +81,7 @@ defmodule Golex do
     - alive set to true or false randomly
   """
   def random_cell(max_x, max_y) do
-    %Cell{position: [rand(max_x), rand(max_y)],
-          neighbors: rand(8),
-          alive: rand(1) == 1}
+    %Cell{position: [rand(max_x), rand(max_y)], neighbors: rand(8), alive: rand(1) == 1}
   end
 
   @doc """
@@ -84,13 +91,11 @@ defmodule Golex do
     - Alive set to true or false randomly
   """
   def new_cell(x, y) do
-    %Cell{position: [x, y],
-          neighbors: rand(8),
-          alive: rand(1) == 1}
+    %Cell{position: [x, y], neighbors: rand(8), alive: rand(1) == 1}
   end
 
   defp rand(max) do
-    :random.uniform(max + 1) - 1
+    :rand.uniform(max + 1) - 1
   end
 
   def world_string(%World{cells: []}, acc) do
@@ -98,8 +103,10 @@ defmodule Golex do
   end
 
   def world_string(%World{dimensions: [w, he], cells: [h | t]}, acc) do
-    world_string(%World{dimensions: [w, he], cells: t},
-                  acc ++ [cell_string(w, h)])
+    world_string(
+      %World{dimensions: [w, he], cells: t},
+      acc ++ [cell_string(w, h)]
+    )
   end
 
   defp cell_string(width, %Cell{position: [x, _], alive: living}) do
@@ -113,13 +120,14 @@ defmodule Golex do
 
   # Print, tick, loop
   defp ptl(world) do
-    IO.puts world_string(world, [])
+    IO.puts(world_string(world, []))
     IO.gets("-----------")
     world_tick(world) |> ptl
   end
 
   def start() do
-    myworld = random_world(79, 20) # 80, 20)
+    # 80, 20)
+    myworld = random_world(79, 20)
     ptl(myworld)
   end
 end

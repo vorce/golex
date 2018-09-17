@@ -2,9 +2,12 @@ defmodule Golex.Mixfile do
   use Mix.Project
 
   def project do
-    [ app: :golex,
+    [
+      app: :golex,
+      elixir: "~> 1.6",
       version: "0.0.1",
-      deps: deps ]
+      deps: deps()
+    ]
   end
 
   # Configuration for the OTP application
