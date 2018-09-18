@@ -1,3 +1,3 @@
-defmodule World do
+defmodule Golex.World do
   defstruct dimensions: [], cells: []
 end

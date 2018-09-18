@@ -3,6 +3,9 @@ defmodule Golex do
   Updates a given cell's alive status according to its number of living
   neghbors.
   """
+  alias Golex.Cell
+  alias Golex.World
+
   def cell_tick(%Cell{neighbors: n} = cell) do
     cond do
       n < 2 -> %Cell{cell | alive: false}

@@ -1,11 +1,11 @@
-defmodule Golex.Mixfile do
+defmodule Golex.MixProject do
   use Mix.Project
 
   def project do
     [
       app: :golex,
-      elixir: "~> 1.6",
-      version: "0.0.1",
+      elixir: "~> 1.7",
+      version: "0.1.0",
       deps: deps()
     ]
   end

@@ -1,6 +1,9 @@
 defmodule GolexTest do
   use ExUnit.Case, async: true
 
+  alias Golex.Cell
+  alias Golex.World
+
   @cell1 %Cell{position: [1, 1], neighbors: -1, alive: true}
   @cell2 %Cell{position: [0, 1], neighbors: 2, alive: true}
   @cell3 %Cell{position: [0, 0], neighbors: 4, alive: true}
