@@ -11,3 +11,6 @@ or
 
     mix run -e Golex.start
 
+## Graphical version
+
+Check out [golux](https://github.com/vorce/golux) that uses Scenic to show the golex state.
