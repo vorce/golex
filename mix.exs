@@ -5,7 +5,7 @@ defmodule Golex.MixProject do
     [
       app: :golex,
       elixir: "~> 1.7",
-      version: "1.0.0",
+      version: "1.1.0",
       deps: deps()
     ]
   end

@@ -11,23 +11,19 @@ defmodule GolexTest do
   @cell5 %Cell{position: {1, 0}, neighbors: 0, alive: true}
 
   test "Any live cell with fewer than two live neighbours dies, as if caused by under-population." do
-    assert Golex.cell_tick(@cell1) ==
-             %Cell{position: @cell1.position, neighbors: @cell1.neighbors, alive: false}
+    assert Golex.cell_tick(@cell1) == %Cell{position: @cell1.position, neighbors: @cell1.neighbors, alive: false}
   end
 
   test "Any live cell with two or three live neighbours lives on to the next generation." do
-    assert Golex.cell_tick(@cell2) ==
-             %Cell{position: @cell2.position, neighbors: @cell2.neighbors, alive: true}
+    assert Golex.cell_tick(@cell2) == %Cell{position: @cell2.position, neighbors: @cell2.neighbors, alive: true}
   end
 
   test "Any live cell with more than three live neighbours dies, as if by overcrowding." do
-    assert Golex.cell_tick(@cell3) ==
-             %Cell{position: @cell3.position, neighbors: @cell3.neighbors, alive: false}
+    assert Golex.cell_tick(@cell3) == %Cell{position: @cell3.position, neighbors: @cell3.neighbors, alive: false}
   end
 
   test "Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction." do
-    assert Golex.cell_tick(@cell4) ==
-             %Cell{position: @cell4.position, neighbors: @cell4.neighbors, alive: true}
+    assert Golex.cell_tick(@cell4) == %Cell{position: @cell4.position, neighbors: @cell4.neighbors, alive: true}
   end
 
   test "Dead cell with two neighbors should not come alive" do

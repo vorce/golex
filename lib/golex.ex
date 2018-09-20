@@ -1,11 +1,15 @@
 defmodule Golex do
+  @moduledoc """
+  Game of life
+  """
+  alias Golex.Cell
+  alias Golex.StdoutRender
+  alias Golex.World
+
   @doc """
   Updates a given cell's alive status according to its number of living
   neghbors.
   """
-  alias Golex.Cell
-  alias Golex.World
-
   def cell_tick(%Cell{neighbors: n} = cell) do
     cond do
       n < 2 -> %Cell{cell | alive: false}
@@ -15,7 +19,7 @@ defmodule Golex do
     end
   end
 
-  @doc "Narrow down the neighbor candidates"
+  @doc "Return all possible neighbor candidates for the cell"
   def neighbor_candidates(cells, %Cell{position: {cx, cy}}) do
     [
       Map.get(cells, {cx - 1, cy}),
@@ -46,7 +50,7 @@ defmodule Golex do
 
   defp neighbor?(%Cell{position: {cx, cy}, alive: living}, {x, y}) do
     cond do
-      # Dead cells aren't counted as neighbors
+      # Dead cells aren't counted as a neighbor
       !living ->
         false
 
@@ -65,7 +69,7 @@ defmodule Golex do
   end
 
   @doc """
-  Returns a new world (list of cells) from the specified one, evolved.
+  Returns a new, evolved world from the specified one.
   """
   def world_tick(%World{cells: cells} = w) do
     %World{w | cells: do_world_tick(cells)}
@@ -94,8 +98,7 @@ defmodule Golex do
     }
   end
 
-  defp coords(xs, ys) do
-    # lc y inlist ys, y, x inlist xs, do: {x, y}
+  def coords(xs, ys) do
     for y <- ys, x <- xs, do: {x, y}
   end
 
@@ -123,35 +126,8 @@ defmodule Golex do
     :rand.uniform(max + 1) - 1
   end
 
-  def world_string(%World{dimensions: {w, h}, cells: cells}, []) do
-    xs = Enum.to_list(0..(w - 1))
-    ys = Enum.to_list(0..(h - 1))
-    cs = coords(xs, ys)
-
-    Enum.map(cs, fn pos ->
-      cell_string(w, Map.get(cells, pos))
-    end)
-  end
-
-  defp cell_string(width, %Cell{position: {x, _}, alive: living}) do
-    cond do
-      x + 1 == width && living -> "#\n"
-      x + 1 == width && !living -> ".\n"
-      living -> "#"
-      true -> "."
-    end
-  end
-
-  # Print, tick, loop
-  defp ptl(world) do
-    IO.puts(world_string(world, []))
-    IO.gets("-----------")
-    world_tick(world) |> ptl
-  end
-
   def start() do
-    # 80, 20)
     myworld = random_world(79, 20)
-    ptl(myworld)
+    StdoutRender.ptl(myworld)
   end
 end
